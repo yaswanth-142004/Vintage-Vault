@@ -6,13 +6,13 @@ import dotenv from "dotenv";
 const userSchema = new mongoose.Schema({
     userName:{
         type:String,
-        minLenght : [5, "User name should be atleast 5 characters"],
-        maxLenght : [50, "User name should be atmost 20 characters"],
+        minLength : [5, "User name should be atleast 5 characters"],
+        maxLength : [50, "User name should be atmost 20 characters"],
 
     },
     password:{
         type:String,
-        selected:false,
+        select:false,
         minLength : [8, "Password should be atleast 8 characters"],
         maxLength : [20, "Password should be atmost 20 characters"],
 
@@ -74,12 +74,25 @@ const userSchema = new mongoose.Schema({
 
 });
 
-userSchema.pre("save",async function(next){
+userSchema.pre("save",async function(next){ // This will run before saving the user to the database
     if(!this.isModified("password"))
     {
         next();
     }
     this.password = await bcrypt.hash(this.password,10);
 })
+
+userSchema.methods.comparePassword = async function(enterdPassword)
+{
+    return await bcrypt.compare(enterdPassword,this.password);
+};
+
+userSchema.methods.generateJwtToken = function()
+{
+    return jwt.sign({_id:this._id},process.env.JWT_SECRET_KEY,{
+        expiresIn:process.env.JWT_EXPIRE,
+    })
+
+}
 
 export const User = mongoose.model("User",userSchema)

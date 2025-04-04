@@ -1,8 +1,12 @@
 import { User } from "../database/models/UserSchema.js";
+import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 import { v2 as cloudinary } from 'cloudinary';
+import { generateToken } from './../../utils/jwtToken.js';
 
-export const register = async (req, res, next) => {
+
+
+export const register = catchAsyncError(async (req, res, next) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return next(new ErrorHandler("Profile Image", 400));
   }
@@ -93,15 +97,11 @@ const user = await User.create({
         },
     },
 });
+generateToken(user,"User Registered ",201,res);
 
-res.status(201).json({
-    success:true,
-    message:"User registered successfully",
-    
+
+
+
+
+
 });
-
-
-
-
-
-};
