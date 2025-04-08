@@ -6,6 +6,10 @@ import fileUpload from "express-fileupload";
 import { connection } from "./database/connection.js";
 import { errorMiddleware } from "./middlewares/error.js";
 import userRouter from "./routers/userRoutes.js";
+import auctionItemRouter from "./routers/auctionItemRoutes.js";
+import bidRouter from "./routers/bidRoutes.js"; 
+import commissionRouter from "./routers/commissionRouter.js";
+import superAdminRouter from "./routers/superAdminRoutes.js";
 
 const app = express();
 
@@ -28,7 +32,13 @@ app.use(fileUpload({
     tempFileDir:"/tmp",
 }))
 
-app.use("/api/v1/user",userRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/auctionitem", auctionItemRouter);
+app.use("/api/v1/bid", bidRouter);
+app.use("/api/v1/commission", commissionRouter);
+app.use("/api/v1/superadmin", superAdminRouter);
+
+
 
 connection(); // This will connect to the database
 app.use(errorMiddleware);
