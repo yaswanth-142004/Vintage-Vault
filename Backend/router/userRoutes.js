@@ -1,7 +1,3 @@
-
-
-
-
 import express from "express";
 import {
   fetchLeaderboard,
@@ -9,7 +5,7 @@ import {
   login,
   logout,
   register,
-} from "../controllers/UserController.js";
+} from "../controllers/userController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();

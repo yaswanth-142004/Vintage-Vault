@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { catchAsyncErrors } from "./catchAsyncError.js";
+import { catchAsyncErrors } from "./catchAsyncErrors.js";
 import ErrorHandler from "./error.js";
 import { Auction } from "../models/auctionSchema.js";
 

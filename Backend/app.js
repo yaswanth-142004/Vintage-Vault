@@ -5,11 +5,11 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import { connection } from "./database/connection.js";
 import { errorMiddleware } from "./middlewares/error.js";
-import userRouter from "./routers/userRoutes.js";
-import auctionItemRouter from "./routers/auctionItemRoutes.js";
-import bidRouter from "./routers/bidRoutes.js"; 
-import commissionRouter from "./routers/commissionRouter.js";
-import superAdminRouter from "./routers/superAdminRoutes.js";
+import userRouter from "./router/userRoutes.js";
+import auctionItemRouter from "./router/auctionItemRoutes.js";
+import bidRouter from "./router/bidRoutes.js"; 
+import commissionRouter from "./router/commissionRouter.js";
+import superAdminRouter from "./router/superAdminRoutes.js";
 
 const app = express();
 

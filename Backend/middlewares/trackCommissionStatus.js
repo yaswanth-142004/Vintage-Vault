@@ -1,5 +1,5 @@
-import { User } from "../models/UserSchema.js";
-import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
+import { User } from "../models/userSchema.js";
+import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
 
 export const trackCommissionStatus = catchAsyncErrors(

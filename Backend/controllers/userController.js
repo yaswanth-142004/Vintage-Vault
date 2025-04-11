@@ -1,146 +1,142 @@
-import  {User } from "../models/UserSchema.js";
-import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
+import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
-import { v2 as cloudinary } from 'cloudinary';
-import { generateToken } from './../../utils/jwtToken.js';
-
-
+import { User } from "../models/userSchema.js";
+import { v2 as cloudinary } from "cloudinary";
+import { generateToken } from "../utils/jwtToken.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
   if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("Profile Image Required", 400));
+    return next(new ErrorHandler("Profile Image Required.", 400));
   }
 
   const { profileImage } = req.files;
-  const allowedFormats = ["image/png", "imag/jpeg", "image/webp"];
+
+  const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
   if (!allowedFormats.includes(profileImage.mimetype)) {
-    return next(new ErrorHandler("File format not supported ", 400));
+    return next(new ErrorHandler("File format not supported.", 400));
   }
 
   const {
     userName,
-    password,
     email,
-    phoneNumber,
+    password,
+    phone,
     address,
     role,
-    accountNumber,
-    accountName,
+    bankAccountNumber,
+    bankAccountName,
     bankName,
-    IFSCCode,
-    upiId,
+    UPI,
+    paypalEmail,
   } = req.body;
 
-
-    if (
-        !userName ||
-        !password ||
-        !email ||
-        !phoneNumber ||
-        !address ||
-        !role 
-        
-    ) {
-        return next(new ErrorHandler("Please fill all the fields", 400));
+  if (!userName || !email || !phone || !password || !address || !role) {
+    return next(new ErrorHandler("Please fill full form.", 400));
+  }
+  if (role === "Auctioneer") {
+    if (!bankAccountName || !bankAccountNumber || !bankName) {
+      return next(
+        new ErrorHandler("Please provide your full bank details.", 400)
+      );
     }
-    if(role === "Seller")
+    if (!UPI) {
+      return next(
+        new ErrorHandler("Please provide your easypaisa account number.", 400)
+      );
+    }
+    if (!paypalEmail) {
+      return next(new ErrorHandler("Please provide your paypal email.", 400));
+    }
+  }
+  const isRegistered = await User.findOne({ email });
+  if (isRegistered) {
+    return next(new ErrorHandler("User already registered.", 400));
+  }
+  const cloudinaryResponse = await cloudinary.uploader.upload(
+    profileImage.tempFilePath,
     {
-        if (!accountNumber || !accountName || !bankName || !IFSCCode) {
-            return next(new ErrorHandler("Please fill your bank details", 400));
-        }
-
-        if(!upiId)
-        {
-            return next(new ErrorHandler("Please fill your UPI ID",400));
-        }
+      folder: "MERN_AUCTION_PLATFORM_USERS",
     }
-
-    const isRegistered = await User.findOne({email});
-    if(isRegistered)
-    {
-        return next(new ErrorHandler("User aldready exist with this email", 400));
-    }
-    const cloudinaryResponse = await cloudinary.uploader.upload(profileImage.tempFilePath,{
-        folder:"VINTAGE_VAULT_USERS",
-    });
-
-    if(!cloudinaryResponse || cloudinaryResponse.error)
-    {
-        console.error("cloudinary error",cloudinaryResponse.error || "unknown cloudainary error");
-
-    return next(new ErrorHandler("Error uploading image to cloudinary ",500));
-    }
-
-    // Now there are no users then we need to store the user details 
-
-
-const user = await User.create({
+  );
+  if (!cloudinaryResponse || cloudinaryResponse.error) {
+    console.error(
+      "Cloudinary error:",
+      cloudinaryResponse.error || "Unknown cloudinary error."
+    );
+    return next(
+      new ErrorHandler("Failed to upload profile image to cloudinary.", 500)
+    );
+  }
+  const user = await User.create({
     userName,
     email,
     password,
-    phoneNumber,
+    phone,
     address,
     role,
-    profileImage :{
-        public_id : cloudinaryResponse.public_id,
-        url : cloudinaryResponse.secure_url,
+    profileImage: {
+      public_id: cloudinaryResponse.public_id,
+      url: cloudinaryResponse.secure_url,
     },
-    paymentMethods:{
-        bankTransaction :{
-            accountNumber,
-            accountName,
-            IFSCCode,
-            bankName,
-        },
-        UPI:{
-            upiId,
-        },
+    paymentMethods: {
+      bankTransfer: {
+        bankAccountNumber,
+        bankAccountName,
+        bankName,
+      },
+      easypaisa: {
+        UPI,
+      },
+      paypal: {
+        paypalEmail,
+      },
     },
+  });
+  generateToken(user, "User Registered.", 201, res);
 });
-generateToken(user,"User Registered ",201,res);
 
+export const login = catchAsyncErrors(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new ErrorHandler("Please fill full form."));
+  }
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) {
+    return next(new ErrorHandler("Invalid credentials.", 400));
+  }
+  const isPasswordMatch = await user.comparePassword(password);
+  if (!isPasswordMatch) {
+    return next(new ErrorHandler("Invalid credentials.", 400));
+  }
+  generateToken(user, "Login successfully.", 200, res);
+});
+
+export const getProfile = catchAsyncErrors(async (req, res, next) => {
+  const user = req.user;
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+export const logout = catchAsyncErrors(async (req, res, next) => {
+  res
+    .status(200)
+    .cookie("token", "", {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    })
+    .json({
+      success: true,
+      message: "Logout Successfully.",
+    });
 });
 
 export const fetchLeaderboard = catchAsyncErrors(async (req, res, next) => {
-    const users = await User.find({ moneySpent: { $gt: 0 } });
-    const leaderboard = users.sort((a, b) => b.moneySpent - a.moneySpent);
-    res.status(200).json({
-      success: true,
-      leaderboard,
-    });
+  const users = await User.find({ moneySpent: { $gt: 0 } });
+  const leaderboard = users.sort((a, b) => b.moneySpent - a.moneySpent);
+  res.status(200).json({
+    success: true,
+    leaderboard,
   });
-  export const login = catchAsyncErrors(async (req, res, next) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return next(new ErrorHandler("Please fill full form."));
-    }
-    const user = await User.findOne({ email }).select("+password");
-    if (!user) {
-      return next(new ErrorHandler("Invalid credentials.", 400));
-    }
-    const isPasswordMatch = await user.comparePassword(password);
-    if (!isPasswordMatch) {
-      return next(new ErrorHandler("Invalid credentials.", 400));
-    }
-    generateToken(user, "Login successfully.", 200, res);
-  });
-  
-  export const getProfile = catchAsyncErrors(async (req, res, next) => {
-    const user = req.user;
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  });export const logout = catchAsyncErrors(async (req, res, next) => {
-    res
-      .status(200)
-      .cookie("token", "", {
-        expires: new Date(Date.now()),
-        httpOnly: true,
-      })
-      .json({
-        success: true,
-        message: "Logout Successfully.",
-      });
-  });
-    
+});
