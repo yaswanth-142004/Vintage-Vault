@@ -27,17 +27,15 @@ export const addNewAuctionItem = catchAsyncErrors(async (req, res, next) => {
     startTime,
     endTime,
   } = req.body;
-  if (
-    !title ||
-    !description ||
-    !category ||
-    !condition ||
-    !startingBid ||
-    !startTime ||
-    !endTime
-  ) {
-    return next(new ErrorHandler("Please provide all details.", 400));
-  }
+  
+  if (!title) return next(new ErrorHandler("Title is required.", 400));
+  if (!description) return next(new ErrorHandler("Description is required.", 400));
+  if (!category) return next(new ErrorHandler("Category is required.", 400));
+  if (!condition) return next(new ErrorHandler("Condition is required.", 400));
+  if (!startingBid) return next(new ErrorHandler("Starting bid is required.", 400));
+  if (!startTime) return next(new ErrorHandler("Start time is required.", 400));
+  if (!endTime) return next(new ErrorHandler("End time is required.", 400));
+  
   if (new Date(startTime) < Date.now()) {
     return next(
       new ErrorHandler(

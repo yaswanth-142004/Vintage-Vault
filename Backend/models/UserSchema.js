@@ -35,7 +35,6 @@ const userSchema = new mongoose.Schema({
       bankAccountNumber: String,
       bankAccountName: String,
       bankName: String,
-      
     },
     UPI: {
       UPI: String,
