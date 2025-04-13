@@ -11,18 +11,58 @@ import bidRouter from "./router/bidRoutes.js";
 import commissionRouter from "./router/commissionRouter.js";
 import superAdminRouter from "./router/superAdminRoutes.js";
 
+
 const app = express();
 
 config({
     path:"./config/config.env",
 });
 
-app.use(cors({
-    origin:[process.env.FRONTEND_URL],
-    methiods: ["POST" ,"GET","PUT","DELETE"],
-    credentials:true,
+// app.use(
+//     cors({
+//       origin: ["*"],
+//       methods: ["POST", "GET", "PUT", "DELETE"],
+//       credentials: true,1
+//     })
+//   );
 
-}))
+
+// app.use(
+//     cors({
+//       origin: function (origin, callback) {
+//         callback(null, origin); // Reflect the request origin
+//       },
+//       methods: ["POST", "GET", "PUT", "DELETE"],
+//       credentials: true,
+//     })
+//   );
+  
+
+// app.use(cors({
+//     origin:[process.env.FRONTEND_URL],
+//     methiods: ["POST" ,"GET","PUT","DELETE"],
+//     credentials:true,
+
+// }))
+
+
+// app.use(
+//     cors({
+//       origin: ["localhost:5173"],
+//       methods: ["POST", "GET", "PUT", "DELETE"],
+//       credentials: true,
+//     })
+//   );
+
+app.use(
+    cors({
+      origin: ["http://localhost:5173"],
+      methods: ["POST", "GET", "PUT", "DELETE"],
+      credentials: true,
+    })
+  );
+
+
 
 app.use(cookieParser());
 app.use(express.json()); // It will parse the data from the form and convert it into JSON format

@@ -109,7 +109,7 @@ const ViewAuctionDetails = () => {
                             className="w-12 h-12 rounded-full my-2 hidden md:block"
                           />
                           <p className="text-[18px] font-semibold">
-                            {element.userName}
+                            {element.userName }
                           </p>
                         </div>
                         <p className="flex-1 text-center">{element.amount}</p>
