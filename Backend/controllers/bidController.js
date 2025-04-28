@@ -4,6 +4,18 @@ import { Auction } from "../models/auctionSchema.js";
 import { Bid } from "../models/bidSchema.js";
 import { User } from "../models/userSchema.js";
 
+
+
+export const getAllBids = catchAsyncErrors(async (req, res, next) => {
+const bids = await Bid.find({});
+res.status(200).json({
+
+  success: true,
+  bids,
+});
+});
+
+
 export const placeBid = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
   const auctionItem = await Auction.findById(id);

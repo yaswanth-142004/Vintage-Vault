@@ -1,3 +1,6 @@
+
+//userController.js
+
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/userSchema.js";
@@ -84,7 +87,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
         bankAccountName,
         bankName,
       },
-      easypaisa: {
+      UPI: {
         UPI,
       },
       paypal: {
@@ -140,3 +143,11 @@ export const fetchLeaderboard = catchAsyncErrors(async (req, res, next) => {
     leaderboard,
   });
 });
+
+export const fetchAllUsers = catchAsyncErrors(async(req,res,next)=>{
+  const users = await User.find({});
+  res.status(200).json({
+    success:true,
+    users,
+  })
+})

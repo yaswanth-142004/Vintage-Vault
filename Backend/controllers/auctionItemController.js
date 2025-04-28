@@ -134,6 +134,16 @@ export const getMyAuctionItems = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+
+export const all = catchAsyncErrors(async (req, res, next) => {
+  const items = await Auction.find({ });
+  res.status(200).json({
+    success: true,
+    items,
+  });
+});
+
+
 export const removeFromAuction = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {

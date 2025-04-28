@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  fetchAllUsers,
   fetchLeaderboard,
   getProfile,
   login,
@@ -15,5 +16,6 @@ router.post("/login", login);
 router.get("/me",isAuthenticated, getProfile);
 router.get("/logout", isAuthenticated, logout);
 router.get("/leaderboard", fetchLeaderboard);
+router.get("/all", fetchAllUsers);
 
 export default router;

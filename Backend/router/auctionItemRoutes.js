@@ -1,5 +1,6 @@
 import {
   addNewAuctionItem,
+  all,
   getAllItems,
   getAuctionDetails,
   getMyAuctionItems,
@@ -44,5 +45,12 @@ router.put(
   isAuthorized("Auctioneer"),
   republishItem
 );
+
+
+router.get("/all",
+  all,
+);
+
+
 
 export default router;
