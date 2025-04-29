@@ -204,7 +204,7 @@ const SignUp = () => {
                   <input
                     type="number"
                     value={UPI}
-                    placeholder="Easypaisa Account Number"
+                    placeholder="UPI Number"
                     onChange={(e) => setUPI(e.target.value)}
                     className="text-[16px] py-2 bg-transparent border-b-[1px] border-b-stone-500 focus:outline-none sm:flex-1"
                     disabled={role === "Bidder"}
