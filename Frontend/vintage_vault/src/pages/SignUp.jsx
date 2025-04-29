@@ -17,6 +17,15 @@ const SignUp = () => {
   const [paypalEmail, setPaypalEmail] = useState("");
   const [profileImage, setProfileImage] = useState("");
   const [profileImagePreview, setProfileImagePreview] = useState("");
+  const [age, setAge] = useState("");
+
+
+
+
+
+
+
+
 
   const { loading, isAuthenticated } = useSelector((state) => state.user);
   const navigateTo = useNavigate();
@@ -183,6 +192,22 @@ const SignUp = () => {
                     value={bankAccountNumber}
                     placeholder="IBAN / IFSC"
                     onChange={(e) => setBankAccountNumber(e.target.value)}
+                    className="text-[16px] py-2 bg-transparent border-b-[1px] border-b-stone-500 focus:outline-none sm:flex-1"
+                    disabled={role === "Bidder"}
+                  />
+                  <input
+                    type="text"
+                    value={bankAccountName}
+                    placeholder="Bank Account UserName"
+                    onChange={(e) => setBankAccountName(e.target.value)}
+                    className="text-[16px] py-2 bg-transparent border-b-[1px] border-b-stone-500 focus:outline-none sm:flex-1"
+                    disabled={role === "Bidder"}
+                  />
+                   <input
+                    type="text"
+                    value={age}
+                    placeholder="Age"
+                    // onChange={(e) => setBankAccountNumber(e.target.value)}
                     className="text-[16px] py-2 bg-transparent border-b-[1px] border-b-stone-500 focus:outline-none sm:flex-1"
                     disabled={role === "Bidder"}
                   />
