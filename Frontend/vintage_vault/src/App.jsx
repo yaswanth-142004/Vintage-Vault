@@ -24,6 +24,8 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Contact from "./pages/Contact";
 import UserProfile from "./pages/UserProfile";
 import Leaderboard from "./Pages/Leaderboard";
+import LastPage from "./pages/last_page";
+
 
 const App = () => {
   const dispatch = useDispatch();
@@ -51,6 +53,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/me" element={<UserProfile />} />
+        <Route path = "/show" element= {<LastPage/>}/>
+       
       </Routes>
       <ToastContainer position="top-right" />
     </Router>

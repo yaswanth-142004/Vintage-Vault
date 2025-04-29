@@ -7,6 +7,8 @@ import { RiAuctionFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+
+
 const AuctionItem = () => {
   const { id } = useParams();
   const { loading, auctionDetail = {}, auctionBidders = [] } = useSelector(
@@ -39,6 +41,18 @@ const AuctionItem = () => {
       dispatch(getAuctionDetail(id));
     }
   }, [isAuthenticated, id, dispatch, navigateTo]);
+
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (id) {
+        dispatch(getAuctionDetail(id));
+      }
+    }, 5000);
+  
+    return () => clearInterval(interval); 
+  }, [id, dispatch]);
 
   return (
     <>

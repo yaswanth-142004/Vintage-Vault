@@ -180,4 +180,20 @@ export const fetchLeaderboard = () => async (dispatch) => {
   }
 };
 
+
+export const fetchAllUsers = () => async(dispatch) =>{
+  dispatch(userSlice.actions.fetchUserRequest());
+  try {
+    const response = await axios.get("http://localhost:5000/api/v1/user/all", {
+      withCredentials: true,
+    });
+    dispatch(userSlice.actions.fetchUserSuccess(response.data.user));
+    dispatch(userSlice.actions.clearAllErrors());
+  } catch (error) {
+    dispatch(userSlice.actions.fetchUserFailed());
+    dispatch(userSlice.actions.clearAllErrors());
+    console.error(error);
+  }
+}
+
 export default userSlice.reducer;
